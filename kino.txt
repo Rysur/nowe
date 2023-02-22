@@ -1,0 +1,62 @@
+CREATE DATABASE kino;
+
+USE kino;
+
+CREATE TABLE film (
+  id_filmu INT AUTO_INCREMENT PRIMARY KEY,
+  tytul TEXT NOT NULL,
+  kategoria_wiekowa INT DEFAULT 18,
+  gatunek TEXT,
+  rok_produkcji YEAR DEFAULT 2019,
+  koszt_produkcji INT
+);
+
+ALTER TABLE film ADD COLUMN rezyser TEXT NOT NULL AFTER tytul;
+
+ALTER TABLE film CHANGE COLUMN kategoria kategoria_wiekowa INT DEFAULT 18;
+
+ALTER TABLE film DROP COLUMN koszt_produkcji;
+
+ALTER TABLE film ADD COLUMN czas_trwania INT NOT NULL AFTER gatunek;
+
+ALTER TABLE film ADD COLUMN plakat BLOB AFTER czas_trwania;
+
+CREATE TABLE seans (
+  id_filmu INT,
+  nr_sali INT NOT NULL,
+  godzina TIME NOT NULL,
+  dzien DATE,
+  FOREIGN KEY (id_filmu) REFERENCES film(id_filmu)
+);
+
+ALTER TABLE seans ADD COLUMN id_seansu INT FIRST;
+
+ALTER TABLE seans ADD PRIMARY KEY (id_seansu);
+
+ALTER TABLE seans CHANGE COLUMN sala nr_sali INT NOT NULL;
+
+ALTER TABLE seans ADD COLUMN dzien DATE AFTER nr_sali;
+
+ALTER TABLE seans MODIFY COLUMN nr_sali INT AFTER dzien;
+
+
+CREATE TABLE bilet (
+  nr_biletu INT PRIMARY KEY,
+  id_seansu INT,
+  cena DECIMAL(5,2) NOT NULL,
+  FOREIGN KEY (id_seansu) REFERENCES seans(id_seansu)
+);
+
+
+ALTER TABLE sprzedaz RENAME TO bilet;
+
+
+ALTER TABLE bilet ADD FOREIGN KEY (id_seansu) REFERENCES seans(id_seansu);
+
+
+DROP TABLE bilet;
+DROP TABLE seans;
+DROP TABLE film;
+
+
+DROP DATABASE kino;
